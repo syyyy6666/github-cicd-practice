@@ -1,0 +1,19 @@
+name: Verify Pages Online
+
+# 线上核验：在 GitHub 云端网络访问 Pages 正式地址，确认发布内容生效。
+# 本地网络无法直连 *.github.io 时可手动运行本工作流取证。
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch deployed page
+        run: |
+          curl -fsS --max-time 30 https://syyyy6666.github.io/github-cicd-practice/ -o page.html
+          echo "HTTP status: 200"
+          grep -o "<h1>[^<]*</h1>" page.html
+          grep -q "沈依杨" page.html && echo "PAGE_OK: 线上页面包含姓名"
+          grep -q "第二次发布" page.html && echo "PAGE_OK: 显示第二次发布内容"
+          echo "URL: https://syyyy6666.github.io/github-cicd-practice/"
